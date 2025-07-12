@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"> 
+
+  <title>Mısıra Seyahat</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+  <!-- Google Font -->
+   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========== CSS Variables =========== */
+    :root {
+      --primary: #007BFF;
+      --secondary: #25D366;
+      --bg-light: #f5f7fa;
+      --bg-dark: #1e1e2f;
+      --text-light: #333;
+      --text-dark: #eee;
+      --transition: 0.3s ease-in-out;
+    }
+    [data-theme="dark"] {
+      --bg-light: var(--bg-dark);
+      --text-light: var(--text-dark);
+    }
+
+    /* =========== Global Reset & Base =========== */
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      line-height:1.6;
+      scroll-behavior: smooth;
+      transition: background var(--transition), color var(--transition);
+    }
+    a { color: inherit; text-decoration:none; }
+    img { max-width:100%; display:block; }
+
+    /* =========== Preloader =========== */
+    #preloader {
+      position: fixed; inset:0;
+      background: var(--bg-light);
+      display:flex; align-items:center; justify-content:center;
+      z-index: 9999;
+    }
+    #preloader.hidden { opacity:0; visibility:hidden; transition: opacity 0.5s; }
+
+    /* =========== Header & Nav =========== */
+    header {
+      position: relative;
+      background: url('https://media.giphy.com/media/26tPplGWjN0xLybiU/giphy.gif') center/cover no-repeat;
+      height: 60vh;
+      min-height: 300px;
+      display:flex; align-items:center; justify-content:center;
+      text-align:center;
+      color:#fff;
+    }
+    header::after {
+      content: '';
+      position:absolute; inset:0;
+      background:rgba(0,0,0,0.5);
+    }
+    header .content {
+      position: relative; z-index:1;
+    }
+    header h1 { font-size:2.8rem; margin-bottom:.5rem; text-shadow:2px 2px 8px rgba(0,0,0,0.5); }
+    header p { font-size:1.2rem; }
+
+    nav {
+      position:sticky; top:0; z-index:1000;
+      background: var(--bg-light);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display:flex; align-items:center; justify-content: space-between;
+      padding: .5rem 1rem;
+      transition: background var(--transition);
+    }
+    nav ul { display:flex; list-style:none; gap:1rem; }
+    nav li { cursor:pointer; font-weight:700; }
+    nav li:hover { color: var(--primary); }
+    .dark-toggle {
+      cursor:pointer;
+      font-size:1.2rem;
+    }
+
+    /* =========== Back to Top =========== */
+    #toTop {
+      position: fixed; bottom:30px; right:30px;
+      background: var(--primary); color:#fff;
+      padding: .5rem .8rem; border-radius:50%;
+      font-size:1.2rem;
+      cursor:pointer; opacity:0; visibility:hidden;
+      transition: opacity var(--transition);
+    }
+    #toTop.show { opacity:1; visibility:visible; }
+
+    /* =========== Sections =========== */
+    section {
+      max-width:1100px; margin: 60px auto; padding: 0 1rem;
+    }
+    section h2 {
+      font-size:2rem; margin-bottom:1rem; position:relative;
+      color: var(--primary);
+    }
+    section h2::before {
+      content:"✨"; position:absolute; left:-30px; top:0;
+    }
+
+    /* =========== Slider =========== */
+    .slider {
+      position: relative; overflow:hidden;
+    }
+    .slides {
+      display:flex; transition: transform var(--transition);
+      will-change: transform;
+    }
+    .slide {
+      flex:0 0 100%; text-align:center;
+      padding: 1rem;
+    }
+    .slide img { border-radius:10px; max-height:300px; object-fit:cover; }
+    .slider-nav {
+      position:absolute; top:50%; width:100%;
+      display:flex; justify-content:space-between;
+      transform: translateY(-50%);
+    }
+    .slider-nav i {
+      background:rgba(0,0,0,0.4); color:#fff;
+      padding:.5rem; border-radius:50%; cursor:pointer;
+    }
+
+    /* =========== Landmarks Grid & Animations =========== */
+    .grid {
+      display:grid; gap:20px;
+      grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+    }
+    .card {
+      background: #fff; border-radius:10px;
+      overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1);
+      transform: translateY(30px); opacity:0;
+      transition: transform .6s, opacity .6s;
+    }
+    .card.visible {
+      transform: translateY(0); opacity:1;
+    }
+    .card img { width:100%; height:180px; object-fit:cover; }
+    .card .info {
+      padding:1rem; text-align:center;
+    }
+    .card h3 { margin-bottom:.5rem; color: var(--primary); }
+
+    /* =========== Search Bar =========== */
+    .search-bar {
+      margin-bottom:2rem; text-align:center;
+    }
+    .search-bar input {
+      width:80%; max-width:400px;
+      padding:.6rem 1rem; border:1px solid #ccc; border-radius:50px;
+      outline:none; font-size:1rem;
+      transition: border-color var(--transition);
+    }
+    .search-bar input:focus { border-color: var(--primary); }
+
+    /* =========== Footer =========== */
+    footer {
+      background: var(--primary); color:#fff;
+      text-align:center; padding:2rem 1rem;
+    }
+    footer .btn {
+      display:inline-block; margin-top:1rem;
+      background: var(--secondary); padding:.7rem 1.4rem;
+      border-radius:50px; font-weight:700;
+      transition: background var(--transition);
+    }
+    footer .btn:hover { background: #1ebe5d; }
+
+    /* Media Queries */
+    @media(max-width:600px){
+      nav ul { display:none; }
+      nav .menu-toggle { display:block; cursor:pointer; }
+      nav.open ul { display:flex; flex-direction:column; gap:.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader"><i class="fas fa-spinner fa-pulse fa-3x"></i></div>
+
+  <!-- Header -->
+  <header id="home">
+    <div class="content">
+      <h1><i class="fas fa-globe"></i> Mısıra Seyahat</h1>
+      <p>جسر التواصل بين العرب والأتراك 🇹🇷🤝🇪🇬</p>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+    <ul>
+      <li data-link="home">الرئيسية</li>
+      <li data-link="arab-landmarks">معالم عرب</li>
+      <li data-link="turk-landmarks">معالم ترك</li>
+      <li data-link="contact">اتصل بنا</li>
+    </ul>
+    <div class="dark-toggle" title="تبديل الوضع"><i class="fas fa-moon"></i></div>
+  </nav>
+
+  <!-- عرب: معالم رئيسية -->
+  <section id="arab-landmarks">
+    <h2>🌍 أهم معالم الدول العربية</h2>
+    <div class="search-bar">
+      <input type="text" id="search-arab" placeholder="ابحث عن معلم...">
+    </div>
+    <div class="grid" id="grid-arab">
+      <!-- كل بطاقة بطاقة -->
+      <div class="card">
+        <img src="https://source.unsplash.com/featured/?pyramids" alt="أهرامات الجيزة">
+        <div class="info">
+          <h3>أهرامات الجيزة</h3>
+          <p>واحدة من عجائب الدنيا السبع، تقع بالقرب من القاهرة.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://source.unsplash.com/featured/?petra" alt="البتراء">
+        <div class="info">
+          <h3>البتراء</h3>
+          <p>المدينة الوردية المنحوتة في الصخور بالأردن.</p>
+        </div>
+      </div>
+      <!-- أضف المزيد هنا -->
+    </div>
+  </section>
+
+  <!-- ترك: معالم رئيسية -->
+  <section id="turk-landmarks">
+    <h2>🌍 أهم معالم تركيا</h2>
+    <div class="search-bar">
+      <input type="text" id="search-turk" placeholder="ابحث عن معلم...">
+    </div>
+    <div class="grid" id="grid-turk">
+      <div class="card">
+        <img src="https://source.unsplash.com/featured/?istanbul" alt="إسطنبول">
+        <div class="info">
+          <h3>إسطنبول</h3>
+          <p>جسر بين قارتي آسيا وأوروبا، مدينة تاريخية نابضة بالحياة.</p>
+        </div>
+      </div>
+      <div class="card">
+        <img src="https://source.unsplash.com/featured/?cappadocia" alt="كابادوكيا">
+        <div class="info">
+          <h3>كابادوكيا</h3>
+          <p>منطقة المناظر الصخرية والمناطيد الشهيرة في الهواء.</p>
+        </div>
+      </div>
+      <!-- أضف المزيد هنا -->
+    </div>
+  </section>
+
+  <!-- Footer & CTA -->
+  <footer id="contact">
+    <h2>انضم إلينا الآن</h2>
+    <p>للمزيد من الدروس والتبادل الثقافي والسفر بين مصر وتركيا</p>
+    <a class="btn" href="https://chat.whatsapp.com/IWKpQi1bTzPD1jTvAoKv5F" target="_blank">
+      <i class="fab fa-whatsapp"></i> انضم للجروب
+    </a>
+  </footer>
+  <!-- Back to Top -->
+  <div id="toTop"><i class="fas fa-chevron-up"></i></div>
+
+  <script>
+    // ========== Preloader ==========
+    window.addEventListener('load', ()=> {
+      document.getElementById('preloader').classList.add('hidden');
+    });
+
+    // ========== Dark Mode Toggle ==========
+    const toggle = document.querySelector('.dark-toggle');
+    const current = localStorage.getItem('theme');
+    if (current === 'dark') document.documentElement.setAttribute('data-theme','dark');
+    toggle.addEventListener('click', ()=>{
+      const isDark = document.documentElement.getAttribute('data-theme')==='dark';
+      document.documentElement.setAttribute('data-theme', isDark?'':'dark');
+      localStorage.setItem('theme', isDark?'light':'dark');
+    });
+
+    // ========== Back to Top ==========
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', ()=>{
+      toTop.classList.toggle('show', window.scrollY>300);
+    });
+    toTop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+    // ========== Smooth Nav Scroll ==========
+    document.querySelectorAll('nav ul li').forEach(item=>{
+      item.addEventListener('click', ()=>{
+        document.getElementById(item.dataset.link).scrollIntoView({behavior:'smooth'});
+      });
+    });
+
+    // ========== Intersection Observer for Cards ==========
+    const observer = new IntersectionObserver((entries)=> {
+      entries.forEach(e=>{
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, {threshold: 0.1});
+    document.querySelectorAll('.card').forEach(el=>observer.observe(el));
+
+    // ========== Live Search ==========
+    function setupSearch(inputId, gridId) {
+      const input = document.getElementById(inputId);
+      const cards = document.getElementById(gridId).children;
+      input.addEventListener('input', ()=> {
+        const term = input.value.trim().toLowerCase();
+        Array.from(cards).forEach(card=>{
+          const title = card.querySelector('h3').textContent.toLowerCase();
+          card.style.display = title.includes(term)?'block':'none';
+        });
+      });
+    }
+    setupSearch('search-arab','grid-arab');
+    setupSearch('search-turk','grid-turk');
+  </script>
+
+</body>
+</html>
